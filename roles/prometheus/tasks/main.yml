@@ -8,6 +8,7 @@
   with_items:
   - "{{ Prometheus_conf_dir }}"
   - "{{ Prometheus_conf_dir }}/rules"
+  - "{{ Prometheus_conf_dir }}/data"
 
 - name: Coppy file config Prometheus
   template: src={{ item.src }} dest={{ item.dest }}
@@ -21,7 +22,7 @@
 - name: Setup Prometheus container
   docker_container:
     name: prometheus
-    image: prom/prometheus
+    image: prom/prometheus:latest
     state: started
     restart: yes
     restart_policy: always
@@ -29,5 +30,17 @@
     - "/etc/timezone:/etc/timezone:ro"
     - "/etc/localtime:/etc/localtime:ro"
     - "{{ Prometheus_conf_dir }}:{{ Prometheus_conf_dir }}:rw"
+    - "{{ Prometheus_conf_dir }}/rules:{{ Prometheus_conf_dir }}/rules:ro"
+    - "{{ Prometheus_conf_dir }}/data:{{ Prometheus_conf_dir }}/data:rw"
     - "{{ Prometheus_conf_dir }}/prometheus.yml:{{ Prometheus_conf_dir }}/prometheus.yml:rw"
+    command: >
+      --config.file={{ Prometheus_conf_dir }}/prometheus.yml
+      --storage.tsdb.path={{ Prometheus_conf_dir }}/data
+      --web.console.templates=/etc/prometheus/consoles
+      --web.console.libraries=/etc/prometheus/console_libraries
+      --web.listen-address=0.0.0.0:{{ prometheus_port }}
+      --storage.tsdb.retention.time=365d
+      --web.enable-admin-api
     network_mode: host
+    ports:
+      - "{{ prometheus_port }}"

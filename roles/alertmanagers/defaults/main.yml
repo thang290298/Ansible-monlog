@@ -1,0 +1,2 @@
+---
+alertmanager_conf_dir: /etc/alertmanager

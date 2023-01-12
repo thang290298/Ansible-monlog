@@ -7,3 +7,5 @@ prometheus_port: 9090
 alertmanagers_port: 9093
 # telegraf
 telegraf_port: 9012
+#telegram-bot
+telegram_bot_port: 9119

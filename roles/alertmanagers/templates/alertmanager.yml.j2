@@ -1,0 +1,26 @@
+global:
+  resolve_timeout: 1m
+templates:
+- '{{ alertmanager_conf_dir }}/notifications.tmpl'
+route:
+  group_by: ['alertname', 'priority']
+  group_wait: 3s
+  group_interval: 5s
+  repeat_interval: 2h
+  receiver: 'telegram-bot'
+receivers:
+- name: telegram-bot
+  webhook_configs:
+    - url: 'http://{{ IP_Monitor }}:{{ telegram_bot_port }}/alert'
+      send_resolved: true
+      http_config:
+        basic_auth:
+          username: 'cloudidc'
+          password: 'cloudidc@2023'
+
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']

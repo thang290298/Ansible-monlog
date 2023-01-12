@@ -1,0 +1,33 @@
+---
+- name: Creates directory alertmanager
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "{{ alertmanager_conf_dir }}"
+- name: Coppy file config alertmanager
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'templates/alertmanager.yml.j2', dest: '{{ alertmanager_conf_dir }}/alertmanager.yml' }
+    - { src: 'templates/notifications.tmpl.j2', dest: '{{ alertmanager_conf_dir }}/notifications.tmpl' }
+
+- name: Create container docker alertmanager
+  docker_container:
+    name: alertmanager
+    image: quay.io/prometheus/alertmanager:latest
+    state: started
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "{{ alertmanager_conf_dir }}:{{ alertmanager_conf_dir }}:ro"
+    - "{{ Prometheus_conf_dir }}:{{ Prometheus_conf_dir }}:ro"
+    - "{{ alertmanager_conf_dir }}/alertmanager.yml:{{ alertmanager_conf_dir }}/alertmanager.yml:rw"
+    - "{{ alertmanager_conf_dir }}/notifications.tmpl:{{ alertmanager_conf_dir }}/notifications.tmpl:rw"
+    network_mode: host
+    ports:
+      - "{{ alertmanagers_port }}"
