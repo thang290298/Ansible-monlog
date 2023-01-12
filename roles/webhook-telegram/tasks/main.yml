@@ -1,0 +1,23 @@
+---
+- name: Create container docker telegram bot
+  docker_container:
+    name: telegram-bot
+    image: quay.io/prometheus/alertmanager:latest
+    pull: yes
+    state: started
+    restart: yes
+    restart_policy: always
+    network_mode: host
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "/etc/prometheus:/etc/prometheus:ro"
+    - "/etc/prometheus/data:/etc/prometheus/data:rw"
+    - "{{ alertmanager_conf_dir }}:{{ alertmanager_conf_dir }}:ro"
+    - "{{ alertmanager_conf_dir }}/alertmanager.yml:{{ alertmanager_conf_dir }}/alertmanager.yml:rw"
+    - "{{ alertmanager_conf_dir }}/notifications.tmpl:{{ alertmanager_conf_dir }}/notifications.tmpl:rw"
+    env:
+      bottoken: "{{ bottoken }}"
+      chatid: "{{ chatid }}"
+      username: "{{ username }}"
+      password: "{{ password }}"

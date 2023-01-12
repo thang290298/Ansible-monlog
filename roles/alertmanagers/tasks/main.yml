@@ -18,6 +18,7 @@
   docker_container:
     name: alertmanager
     image: quay.io/prometheus/alertmanager:latest
+    pull: yes
     state: started
     restart: yes
     restart_policy: always
@@ -29,5 +30,3 @@
     - "{{ alertmanager_conf_dir }}/alertmanager.yml:{{ alertmanager_conf_dir }}/alertmanager.yml:rw"
     - "{{ alertmanager_conf_dir }}/notifications.tmpl:{{ alertmanager_conf_dir }}/notifications.tmpl:rw"
     network_mode: host
-    ports:
-      - "{{ alertmanagers_port }}"

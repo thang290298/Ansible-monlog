@@ -23,6 +23,7 @@
   docker_container:
     name: prometheus
     image: prom/prometheus:latest
+    pull: yes
     state: started
     restart: yes
     restart_policy: always
@@ -42,5 +43,3 @@
       --storage.tsdb.retention.time=365d
       --web.enable-admin-api
     network_mode: host
-    ports:
-      - "{{ prometheus_port }}"
