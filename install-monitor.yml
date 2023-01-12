@@ -1,0 +1,9 @@
+---
+- hosts: monlog
+  become: true
+  roles:
+  - { role: server-basic, tags: ["basic"] }
+  - { role: prometheus, tags: ["prometheus"] }
+  - { role: alertmanagers, tags: ["alertmanagers"] }
+  - { role: webhook-telegram, tags: ["webhook-telegram"] }
+  - { role: grafana, tags: ["grafana"] }
