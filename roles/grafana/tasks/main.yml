@@ -1,0 +1,27 @@
+---
+- name: Creates directory grafana
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "/etc/grafana"
+  - "/var/log/grafana"
+
+- name: Create container docker alertmanager
+  docker_container:
+    name: grafana
+    image: grafana/grafana:latest
+    pull: yes
+    state: started
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "/etc/grafana:/etc/grafana:ro"
+    - "/etc/prometheus/data:/etc/prometheus/data:ro"
+    - "/var/log/grafana:/var/log/grafana:rw"
+    network_mode: host
