@@ -17,7 +17,7 @@
     - "{{ alertmanager_conf_dir }}/alertmanager.yml:{{ alertmanager_conf_dir }}/alertmanager.yml:rw"
     - "{{ alertmanager_conf_dir }}/notifications.tmpl:{{ alertmanager_conf_dir }}/notifications.tmpl:rw"
     env:
-      bottoken: "{{ bottoken }}"
-      chatid: "{{ chatid }}"
-      username: "{{ username }}"
-      password: "{{ password }}"
+      bottoken: "5731059714:AAEMbzaYb5AsLGBOKuMZopQdBmDiqyLpE9w"
+      chatid: "-1001759516733"
+      username: "cloudidc"
+      password: "cloudidc@2023"

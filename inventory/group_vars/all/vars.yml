@@ -9,7 +9,3 @@ alertmanagers_port: 9093
 telegraf_port: 9012
 # webhook-telegram
 telegram_bot_port: 9119
-bottoken: 5731059714:AAEMbzaYb5AsLGBOKuMZopQdBmDiqyLpE9w
-chatid: -1001759516733
-username: cloudidc
-password: cloudidc@2023

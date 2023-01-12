@@ -24,6 +24,7 @@
     name: prometheus
     image: prom/prometheus:latest
     pull: yes
+    user: "1000:1000"
     state: started
     restart: yes
     restart_policy: always
