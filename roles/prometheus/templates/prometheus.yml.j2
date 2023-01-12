@@ -1,0 +1,48 @@
+# Config global
+global:
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - {{ IP_Monitor }}:{{ alertmanagers_port }}
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  - "/etc/prometheus/rules/alert_node.yml"
+  - "/etc/prometheus/rules/alert_libvirt.yml"
+  - "/etc/prometheus/rules/alert_ceph.yml"
+  - "/etc/prometheus/rules/alert_ops.yml"
+
+# Scrape config
+scrape_configs:
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["{{ IP_Monitor }}:{{ prometheus_port }}"]
+
+# Scrape OpenStack
+  - job_name: 'openstack_IDC_Lab'
+    scrape_interval: 1m
+    static_configs:
+      - targets: ['10.159.34.10:{{ telegraf_port }}']
+        labels:
+          hostname: 'controller-demo'
+      - targets: ['10.159.34.11:{{ telegraf_port }}']
+        labels:
+          hostname: 'network-demo'
+      - targets: ['10.159.34.12:{{ telegraf_port }}']
+        labels:
+          hostname: 'compute-demo01'
+      - targets: ['10.159.34.13:{{ telegraf_port }}']
+        labels:
+          hostname: 'compute-demo02'
+      - targets: ['10.159.34.14:{{ telegraf_port }}']
+        labels:
+          hostname: 'compute-demo03'
+# Scrape ceph
+  - job_name: 'ceph_IDC_Lab'
+    scrape_interval: 1m
+    static_configs:
+      - targets: ['10.159.34.15:{{ telegraf_port }}']
+        labels:
+          hostname: 'ceph-demo'

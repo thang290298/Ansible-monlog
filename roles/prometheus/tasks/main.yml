@@ -1,0 +1,33 @@
+- name: Creates directory Prometheus
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "{{ Prometheus_conf_dir }}"
+  - "{{ Prometheus_conf_dir }}/rules"
+
+- name: Coppy file config Prometheus
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'templates/prometheus.yml.j2', dest: '{{ Prometheus_conf_dir }}/prometheus.yml' }
+    - { src: 'templates/alert_ceph.yml.j2', dest: '{{ Prometheus_conf_dir }}/rules/alert_ceph.yml' }
+    - { src: 'templates/alert_libvirt.yml.j2', dest: '{{ Prometheus_conf_dir }}/rules/alert_libvirt.yml' }
+    - { src: 'templates/alert_node.yml.j2', dest: '{{ Prometheus_conf_dir }}/rules/alert_node.yml' }
+    - { src: 'templates/alert_ops.yml.j2', dest: '{{ Prometheus_conf_dir }}/rules/alert_ops.yml' }
+
+- name: Setup Prometheus container
+  docker_container:
+    name: prometheus
+    image: prom/prometheus
+    state: started
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "{{ Prometheus_conf_dir }}:{{ Prometheus_conf_dir }}:rw"
+    - "{{ Prometheus_conf_dir }}/prometheus.yml:{{ Prometheus_conf_dir }}/prometheus.yml:rw"
+    network_mode: host

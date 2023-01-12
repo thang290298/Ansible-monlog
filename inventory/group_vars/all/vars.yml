@@ -1,0 +1,9 @@
+# ------------------------- Monitor -------------------------
+# IP server Monlog
+IP_Monitor: 10.159.34.16
+# prometheus
+prometheus_port: 9090
+# alertmanagers
+alertmanagers_port: 9093
+# telegraf
+telegraf_port: 9012

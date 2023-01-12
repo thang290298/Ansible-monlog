@@ -1,0 +1,76 @@
+---
+- name: delete user ubuntu
+  user:
+    name: ubuntu
+    state: "absent"
+    remove: true
+- name: Update repo and cache
+  apt:
+    update_cache=yes
+    force_apt_get=yes
+    cache_valid_time=3600
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Upgrade all apt packages
+  apt: upgrade=dist
+  when: ansible_distribution == 'Ubuntu'
+
+
+- name: Install packages necessary for APT to use a repository over HTTPS
+  apt:
+    name: "{{ docker_required_packages }}"
+    update_cache: yes
+    install_recommends: no
+    state: present
+
+- name: Add official Docker GPG key
+  apt_key:
+    url: "{{ docker_gpg_url }}"
+    state: present
+  when: ansible_distribution == 'Ubuntu'
+
+
+- name: Add official Docker APT repository
+  apt_repository:
+    repo: "{{ docker_repo }}"
+    state: present
+    filename: 'docker-official'
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Install Python Docker module
+  pip:
+    name: docker
+
+
+- name: Install docker-ce
+  apt:
+    name: "{{ docker_packges }}"
+    update_cache: yes
+    install_recommends: yes
+    state: present
+
+
+- name: Add users to the Docker group
+  user:
+    name: "{{ group_user }}"
+    groups: docker
+    append: yes
+
+
+- name: Install docker-compose
+  get_url:
+    url: "{{ docker_compose_url }}"
+    dest: /usr/local/bin/docker-compose
+    mode: u+x,g+x,o+x
+
+- name: check version docker is installed
+  shell: command docker -v
+  register: print_version_docker
+  ignore_errors: yes
+- name: check version docker-compose is installed
+  shell: command docker-compose version
+  register: print_version_docker_compose
+  ignore_errors: yes
+- debug: msg="{{ print_version_docker.stdout }}"
+- debug: msg="{{ print_version_docker_compose.stdout }}"
