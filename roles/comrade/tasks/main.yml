@@ -1,0 +1,32 @@
+- name: Creates directory elasticsearch Plugin
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "{{ elasticsearch_conf_dir }}/comrade"
+
+- name: Coppy file elasticsearch.json
+  template:
+    src: "templates/elasticsearch.json.j2"
+    dest: "{{ elasticsearch_conf_dir }}/comrade/elasticsearch.json"
+
+- name: Setup Plugin elasticsearch Comrade container
+  docker_container:
+    name: comrade
+    image: mosheza/elasticsearch-comrade
+    state: started
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "{{ elasticsearch_conf_dir }}/comrade:/app/comrade/clusters/:rw"
+    network_mode: host
+
+- name: Allow port comrade
+  ufw:
+    rule: allow
+    port: '8000'

@@ -9,3 +9,49 @@ alertmanagers_port: 9093
 telegraf_port: 9012
 # webhook-telegram
 telegram_bot_port: 9119
+# ------------------------- Logging -------------------------
+# info
+server_name: elk.smartcloud.com
+IP_Public: 192.168.70.51
+ELK_VERSION: 7.17.6
+elastic_user: elastic
+elastic_password: Vnpt@!2023
+discovery_type: single-node
+# Elasticsearch
+Cluster_name: single
+elasticsearch_hostname: elasticsearch
+elasticsearch_conf_dir: /usr/share/elasticsearch
+ES_PORT: 9200
+ES_TRANSPORT_PORT: 9300
+discovery.type: single-node
+bootstrap_memory_lock: true
+ES_JAVA_OPTS: -Xmx2g -Xms2g
+
+# Kibana
+kibana_hostname: kibana
+kibana_conf_dir: /usr/share/kibana
+kibana_PORT: 5601
+
+# Logstash
+logstash_hostname: logstash
+logstash_conf_dir: /usr/share/logstash
+logstash_port: 5044
+LS_JAVA_OPTS: -Xmx512m -Xms512m
+
+# Certs
+certs_hostname: create_certs
+
+
+# Logs
+log_driver: "json-file"
+log_max_size: "10m"
+log_max_file: "3"
+
+# Beats
+number_of_shards: 1
+index_codec: best_compression
+logging_level: debug
+logging_to_files: true
+
+number_of_shards: 1
+IP_host: 192.168.70.51

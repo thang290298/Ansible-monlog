@@ -1,0 +1,52 @@
+- name: Creates directory elasticsearch
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "{{ elasticsearch_conf_dir }}/data"
+  - "{{ elasticsearch_conf_dir }}/logs"
+  - "{{ elasticsearch_conf_dir }}/snapshots"
+  - "{{ elasticsearch_conf_dir }}/config"
+  - "{{ elasticsearch_conf_dir }}/certs"
+  - "{{ elasticsearch_conf_dir }}/plugins"
+
+- name: Coppy file elasticsearch.yml
+  template:
+    src: "templates/elasticsearch.yml.j2"
+    dest: "{{ elasticsearch_conf_dir }}/config/elasticsearch.yml"
+
+- name: Setup elasticsearch container
+  docker_container:
+    name: "{{ elasticsearch_hostname }}"
+    image: docker.elastic.co/elasticsearch/elasticsearch:{{ ELK_VERSION }}
+    state: started
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "{{ elasticsearch_conf_dir }}/data:{{ elasticsearch_conf_dir }}/data:rw"
+    - "{{ elasticsearch_conf_dir }}/logs:{{ elasticsearch_conf_dir }}/logs:rw"
+    - "{{ elasticsearch_conf_dir }}/snapshots:{{ elasticsearch_conf_dir }}/snapshots:rw"
+    - "{{ elasticsearch_conf_dir }}/config/elasticsearch.yml:{{ elasticsearch_conf_dir }}/config/elasticsearch.yml:ro"
+    - "{{ elasticsearch_conf_dir }}/certs:{{ elasticsearch_conf_dir }}/config/certs:ro"
+    - "{{ elasticsearch_conf_dir }}/plugins:{{ elasticsearch_conf_dir }}/plugins:rw"
+    env:
+      ELASTIC_PASSWORD: "{{ elastic_password }}"
+      ES_JAVA_OPTS: "{{ ES_JAVA_OPTS }}"
+    network_mode: host
+    ulimits:
+    - nofile:65535:65535
+    state: started
+    log_driver: "{{ log_driver }}"
+    log_options:
+      max-size: "{{ log_max_size }}"
+      max-file: "{{ log_max_file }}"
+
+- name: allow port elasticsearch
+  ufw:
+    rule: allow
+    port: '{{ ES_PORT }}'

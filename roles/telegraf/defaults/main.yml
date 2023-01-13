@@ -1,0 +1,10 @@
+---
+# Docker specific settings
+telegraf_gid_docker: 995
+telegraf_uid_docker: 998
+telegraf_image_version: 1.25.0
+# Config input
+urls_ping: "192.168.70.91","192.168.70.92","192.168.70.93","8.8.8.8"
+# Config output
+prometheus_client_port: 9012
+authentication_endpoint: https://172.16.68.10:5000/v3

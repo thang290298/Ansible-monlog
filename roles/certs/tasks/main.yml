@@ -1,0 +1,17 @@
+- name: Creates directory elasticsearch
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "{{ elasticsearch_conf_dir }}"
+  
+- name: Coppy file docker-compose
+  template:
+    src: "templates/create-certs.yml.j2"
+    dest: "{{ elasticsearch_conf_dir }}/create-certs.yml"
+
+- name: Create certs SSL ELK
+  shell: docker-compose -f /usr/share/elasticsearch/create-certs.yml run --rm create-certs

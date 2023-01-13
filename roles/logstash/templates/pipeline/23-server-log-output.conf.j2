@@ -1,0 +1,15 @@
+output {
+  if "server_log" in [tags] {
+    elasticsearch {
+      hosts => ["https://{{ IP_Public }}:{{ ES_PORT }}"]
+      user => "elastic"
+      password => "Vnpt@!2022"
+      ssl => true
+      ssl_certificate_verification => false
+      cacert => "/usr/share/logstash/config/certs/ca/ca.crt"
+      sniffing => true
+      index => "server_log-%{+YYYY.MM.dd}"
+    }
+  }
+  stdout { codec => rubydebug }
+}

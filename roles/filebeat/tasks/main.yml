@@ -1,0 +1,49 @@
+- name: Creates directory filebeat
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "{{ filebeat_conf_dir }}"
+
+- name: Creates directory filebeat loging path
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "{{ logging_path_local }}"
+
+- name: Coppy file config filebeat.yml
+  template:
+    src: "templates/filebeat.yml.j2"
+    dest: "{{ filebeat_conf_dir }}/filebeat.yml"
+
+- name: Setup filebeat container
+  docker_container:
+    name: filebeat
+    image: docker.elastic.co/beats/filebeat:{{ ELK_VERSION }}
+    user: root
+    state: started
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "{{ filebeat_conf_dir }}/filebeat.yml:{{ filebeat_conf_dir }}/filebeat.yml:rw"
+    - "{{ logging_path_local }}:{{ filebeat_conf_dir }}/logs:rw"
+    network_mode: host
+
+- name: Allow port {{ HAProxy_logstash_port }}
+  ufw:
+    rule: allow
+    port: '{{ HAProxy_logstash_port }}'
+
+- name: Allow port {{ http_port }} http
+  ufw:
+    rule: allow
+    port: '{{ http_port }}'

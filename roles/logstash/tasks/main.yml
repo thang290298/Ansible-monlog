@@ -1,0 +1,60 @@
+- name: Creates directory logstash
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "{{ logstash_conf_dir }}/config"
+  - "{{ logstash_conf_dir }}/pipeline"
+  - "{{ logstash_conf_dir }}/patterns"
+
+- name: Copy logstash config
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'templates/config/logstash.yml.j2', dest: '{{ logstash_conf_dir }}/config/logstash.yml' }
+    - { src: 'templates/config/jvm.options.j2', dest: '{{ logstash_conf_dir }}/config/jvm.options' }
+    - { src: 'templates/config/log4j2.properties.j2', dest: '{{ logstash_conf_dir }}/config/log4j2.properties' }
+    - { src: 'templates/config/pipelines.yml.j2', dest: '{{ logstash_conf_dir }}/config/pipelines.yml' }
+    - { src: 'templates/config/startup.options.j2', dest: '{{ logstash_conf_dir }}/config/startup.options' }
+
+- name: Copy logstash patterns
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'templates/patterns/grok-patterns.j2', dest: '{{ logstash_conf_dir }}/patterns/grok-patterns' }
+    
+- name: Copy logstash pipeline conf
+  template: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'templates/pipeline/01-beats-input.conf.j2', dest: '{{ logstash_conf_dir }}/pipeline/01-beats-input.conf' }
+    - { src: 'templates/pipeline/10-logstash-filter-server-log.conf.j2', dest: '{{ logstash_conf_dir }}/pipeline/10-logstash-filter-server-log.conf' }
+    - { src: 'templates/pipeline/21-elasticsearch-output-kolla-openstack.conf.j2', dest: '{{ logstash_conf_dir }}/pipeline/21-elasticsearch-output-kolla-openstack.conf' }
+    - { src: 'templates/pipeline/22-elasticsearch-output-cephadm.conf.j2', dest: '{{ logstash_conf_dir }}/pipeline/22-elasticsearch-output-cephadm.conf' }
+    - { src: 'templates/pipeline/23-server-log-output.conf.j2', dest: '{{ logstash_conf_dir }}/pipeline/23-server-log-output.conf' }
+  notify: Restart-logstash
+
+- name: Setup logstash container
+  docker_container:
+    name: "{{ logstash_hostname }}"
+    image: docker.elastic.co/logstash/logstash:{{ ELK_VERSION }}
+    state: started
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "{{ logstash_conf_dir }}/config:{{ logstash_conf_dir }}/config:rw"
+    - "{{ logstash_conf_dir }}/patterns:/usr/share/logstash/patterns:rw"
+    - "{{ logstash_conf_dir }}/pipeline:/usr/share/logstash/pipeline:rw"
+    - "{{ elasticsearch_conf_dir }}/certs:{{ logstash_conf_dir }}/config/certs:ro"
+    network_mode: host
+    log_driver: "{{ log_driver }}"
+    log_options:
+      max-size: "{{ log_max_size }}"
+      max-file: "{{ log_max_file }}"
+
+- name: Allow port {{ logstash_port }} Logstash
+  ufw:
+    rule: allow
+    port: '{{ logstash_port }}'

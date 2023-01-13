@@ -1,0 +1,20 @@
+filter {
+  if "ceph" in [tags] {
+    grok {
+      patterns_dir => ["/usr/share/logstash/patterns/grok-patterns"]
+      match => {
+        "message" => [
+          "%{TIMESTAMP_ISO8601:cephadm_timestamp} %{HOSTNAME:cephadm_id} %{LOGLEVEL:ceph_level} %{DATA:cephadm_program}(?:\[%{POSINT:cephadm_pid}\])?: %{GREEDYDATA:cephadm_message}",
+          "%{TIMESTAMP_ISO8601:cephadm_timestamp} %{HOSTNAME:cephadm_id} %{LOGLEVEL:ceph_level} Unit (?<service>[a-z.-]+) %{GREEDYDATA:cephadm_message}",
+          "%{TIMESTAMP_ISO8601:cephadm_timestamp} %{HOSTNAME:cephadm_id} %{LOGLEVEL:ceph_level} %{DATA:cephadm_shell}: %{GREEDYDATA:cephadm_message}",
+          "cephadm %{GREEDYDATA:cephadm_message}",
+          "%{TIMESTAMP_ISO8601:cephadm_timestamp} %{HOSTNAME:cephadm_id} %{LOGLEVEL:ceph_level} %{GREEDYDATA:cephadm_message}"
+        ] }
+      remove_tag => [ "beats_input_codec_plain_applied" ]
+    }
+    date {
+      match => [ "syslog_timestamp", "MMM d HH:mm:ss", "MMM dd HH:mm:ss" ]
+      timezone => "Asia/Ho_Chi_Minh"
+    }
+  }
+}
