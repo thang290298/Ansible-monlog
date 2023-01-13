@@ -9,6 +9,10 @@ alertmanagers_port: 9093
 telegraf_port: 9012
 # webhook-telegram
 telegram_bot_port: 9119
+# webhook-telegram
+libvirt_expoter_port: 9177
+#ceph_exporter
+ceph_exporter_port: 9128
 # ------------------------- Logging -------------------------
 # info
 server_name: elk.smartcloud.com

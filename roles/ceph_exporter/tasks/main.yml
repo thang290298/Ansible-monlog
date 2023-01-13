@@ -28,4 +28,4 @@
     - "/etc/ceph:/etc/ceph:ro"
     network_mode: host
     ports:
-    - "9128:9128"
+    - "{{ ceph_exporter_port }}:{{ ceph_exporter_port }}"

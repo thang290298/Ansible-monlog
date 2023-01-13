@@ -1,0 +1,19 @@
+---
+- name: Running container Libvirt docker
+  docker_container:
+    name: "libvirt-exporter"
+    image: alekseizakharov/libvirt-exporter:latest
+    state: started
+    restart: yes
+    restart_policy: always
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - " /var/run/libvirt:/var/run/libvirt"
+    network_mode: host
+    ports:
+    - "{{ libvirt_expoter_port }}:{{ libvirt_expoter_port }}"
+    log_driver: "{{ log_driver }}"
+    log_options:
+      max-size: "{{ log_max_size }}"
+      max-file: "{{ log_max_file }}"

@@ -12,7 +12,11 @@
   template: src={{ item.src }} dest={{ item.dest }}
   with_items:
     - { src: 'templates/alertmanager.yml.j2', dest: '{{ alertmanager_conf_dir }}/alertmanager.yml' }
-    - { src: 'templates/notifications.tmpl.j2', dest: '{{ alertmanager_conf_dir }}/notifications.tmpl' }
+
+- name: Download template alert
+  get_url:
+    url: https://raw.githubusercontent.com/prometheus/alertmanager/master/template/default.tmpl
+    dest: "{{ alertmanager_conf_dir }}/notifications.tmpl"
 
 - name: Create container docker alertmanager
   docker_container:
