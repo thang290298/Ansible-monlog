@@ -2,7 +2,7 @@
 - name: Create container docker telegram bot
   docker_container:
     name: telegram-bot
-    image: quay.io/prometheus/alertmanager:latest
+    image: hungnv1008/alertmanager-webhook-telegram
     pull: yes
     state: started
     restart: yes
