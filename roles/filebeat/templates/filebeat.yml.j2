@@ -40,7 +40,7 @@ processors:
 
 output.logstash:
   # The Logstash hosts
-  hosts: ["{{ Virtual_IP01 }}:{{ HAProxy_logstash_port }}"]
+  hosts: ["{{ IP_Public }}:{{ logstash_port }}"]
 
   # Optional SSL. By default is off.
   # List of root certificates for HTTPS server verifications

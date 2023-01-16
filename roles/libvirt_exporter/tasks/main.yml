@@ -9,10 +9,8 @@
     volumes:
     - "/etc/timezone:/etc/timezone:ro"
     - "/etc/localtime:/etc/localtime:ro"
-    - " /var/run/libvirt:/var/run/libvirt"
+    - "/var/run/libvirt:/var/run/libvirt"
     network_mode: host
-    ports:
-    - "{{ libvirt_expoter_port }}:{{ libvirt_expoter_port }}"
     log_driver: "{{ log_driver }}"
     log_options:
       max-size: "{{ log_max_size }}"

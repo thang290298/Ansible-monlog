@@ -8,7 +8,7 @@
 
 - name: build image ceph_exporter
   docker_image:
-    name: Digitalocean/ceph_exporter: latest
+    name: Digitalocean/ceph_exporter:latest
     build:
       path: /root/ceph_exporter
       source: build

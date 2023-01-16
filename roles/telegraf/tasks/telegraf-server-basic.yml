@@ -13,7 +13,7 @@
 
 - name: Coppy file config telegraf.conf
   template:
-    src: "telegraf-server-basic.conf.j2"
+    src: "templates/telegraf-server-basic.conf.j2"
     dest: "/etc/telegraf/telegraf.conf"
 
 - name: Run Telegraf Docker container

@@ -40,7 +40,7 @@
 
 - name: Install pip docker
   pip:
-    name: dockers
+    name: docker
     executable: /usr/bin/pip3
 
 

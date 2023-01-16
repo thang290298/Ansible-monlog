@@ -1,5 +1,5 @@
 ---
-- name: Creates directory Prometheus
+- name: Creates directory telegraf
   file:
     path: "{{ item }}"
     state: directory

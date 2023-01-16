@@ -38,10 +38,10 @@
     - "{{ logging_path_local }}:{{ filebeat_conf_dir }}/logs:rw"
     network_mode: host
 
-- name: Allow port {{ HAProxy_logstash_port }}
+- name: Allow port {{ logstash_port }}
   ufw:
     rule: allow
-    port: '{{ HAProxy_logstash_port }}'
+    port: '{{ logstash_port }}'
 
 - name: Allow port {{ http_port }} http
   ufw:
