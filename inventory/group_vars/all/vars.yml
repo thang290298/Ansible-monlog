@@ -15,7 +15,7 @@ libvirt_expoter_port: 9177
 ceph_exporter_port: 9128
 # ------------------------- Logging -------------------------
 # info
-server_name: elk.smartcloud.com
+server_name: smartcloud.com
 IP_Public: 192.168.70.51
 ELK_VERSION: 7.17.6
 elastic_user: elastic
@@ -23,7 +23,7 @@ elastic_password: Vnpt@!2023
 discovery_type: single-node
 # Elasticsearch
 Cluster_name: single
-elasticsearch_hostname: elasticsearch
+elasticsearch_hostname: elasticsearch.{{ server_name }}
 elasticsearch_conf_dir: /usr/share/elasticsearch
 ES_PORT: 9200
 ES_TRANSPORT_PORT: 9300
@@ -32,12 +32,12 @@ bootstrap_memory_lock: true
 ES_JAVA_OPTS: -Xmx2g -Xms2g
 
 # Kibana
-kibana_hostname: kibana
+kibana_hostname: kibana.{{ server_name }}
 kibana_conf_dir: /usr/share/kibana
 kibana_PORT: 5601
 
 # Logstash
-logstash_hostname: logstash
+logstash_hostname: logstash.{{ server_name }}
 logstash_conf_dir: /usr/share/logstash
 logstash_port: 5044
 LS_JAVA_OPTS: -Xmx512m -Xms512m

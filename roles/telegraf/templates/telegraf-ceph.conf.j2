@@ -77,36 +77,6 @@
            "nf_conntrack_count","nf_conntrack_max"]
   dirs = ["/proc/sys/net/ipv4/netfilter","/proc/sys/net/netfilter"]
 
-[[inputs.openstack]]
-## The recommended interval to poll is '30m'
-  interval = "2m"
-  authentication_endpoint = "{{ authentication_endpoint }}"
-  domain = "{{ domain }}"
-  project = "{{ project }}"
-  username = "{{ username }}"
-  password = "{{ password }}"
-  ## Available services are:
-  ## "agents", "aggregates", "flavors", "hypervisors", "networks", "nova_services",
-  ## "ports", "projects", "servers", "services", "stacks", "storage_pools", "subnets", "volumes"
-  enabled_services = ["services", "projects", "hypervisors", "flavors", "networks", "volumes"]
-  ## Collect Server Diagnostics
-  # server_diagnotics = false
-
-  ## output secrets (such as adminPass(for server) and UserID(for volume)).
-  # output_secrets = false
-
-  ## Amount of time allowed to complete the HTTP(s) request.
-  # timeout = "5s"
-
-  ## HTTP Proxy support
-  # http_proxy_url = ""
-
-  ## Optional TLS Config
-  # tls_ca = /path/to/cafile
-  # tls_cert = /path/to/certfile
-  # tls_key = /path/to/keyfile
-  ## Use TLS but skip chain & host verification
-  # insecure_skip_verify = false
 
 # Output Plugin Prometheus
 [[outputs.prometheus_client]]

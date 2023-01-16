@@ -1,5 +1,5 @@
 ---
-- hosts: monlog
+- hosts: monitoring
   become: true
   roles:
   - { role: server-basic, tags: ["basic"] }

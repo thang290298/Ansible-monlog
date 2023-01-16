@@ -1,5 +1,5 @@
 ---
-- hosts: monlog
+- hosts: logging
   become: true
   roles:
   - { role: certs, tags: ["certs"] }

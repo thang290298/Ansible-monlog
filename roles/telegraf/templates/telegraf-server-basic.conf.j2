@@ -1,0 +1,40 @@
+[agent]
+  flush_interval = "5s"
+  interval = "5s"
+
+
+# Input Plugins
+[[inputs.cpu]]
+    percpu = true
+    totalcpu = true
+    collect_cpu_time = false
+    report_active = false
+    fielddrop = ["time_*"]
+[[inputs.disk]]
+    ignore_fs = ["tmpfs", "devtmpfs", "devfs"]
+[[inputs.io]]
+[[inputs.diskio]]
+[[inputs.mem]]
+[[inputs.net]]
+[[inputs.system]]
+[[inputs.swap]]
+[[inputs.netstat]]
+[[inputs.processes]]
+[[inputs.kernel]]
+[[inputs.interrupts]]
+[[inputs.linux_sysctl_fs]]
+[[inputs.ping]]
+  ## Hosts to send ping packets to.
+  urls = ["{{ urls_ping1 }}","{{ urls_ping2 }}","{{ urls_ping3 }}","{{ urls_ping4 }}"]
+#[[inputs.chrony]]
+#  ## If true, chronyc tries to perform a DNS lookup for the time server.
+#  dns_lookup = true
+[[inputs.conntrack]]
+  files = ["ip_conntrack_count","ip_conntrack_max",
+           "nf_conntrack_count","nf_conntrack_max"]
+  dirs = ["/proc/sys/net/ipv4/netfilter","/proc/sys/net/netfilter"]
+
+# Output Plugin Prometheus
+[[outputs.prometheus_client]]
+  listen = "{{ anisble_host }}:{{ prometheus_client_port }}"
+  metric_version = 2

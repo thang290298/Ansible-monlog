@@ -1,41 +1,9 @@
 ---
-- name: Creates directory Prometheus
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: 0755
-    owner: 1000
-    group: 1000
-  with_items:
-  - "/etc/telegraf"
-  - "/etc/telegraf/telegraf.d"
+- include_tasks: "telegraf-server-basic.yml"
+  when: ('monitoring' in group_names) and ('logging' in group_names) and ('compute' in group_names) and ('network' in group_names)
 
+- include_tasks: "telegraf-ops-controller.yml"
+  when: ('controller' in group_names)
 
-- name: Coppy file config telegraf.conf
-  template:
-    src: "templates/telegraf.conf.j2"
-    dest: "/etc/telegraf/telegraf.conf"
-
-- name: Run Telegraf Docker container
-  docker_container:
-    name: telegraf
-    image: "telegraf:{{ telegraf_image_version }}"
-    state: started
-    restart: yes
-    restart_policy: always
-    command: -config /etc/telegraf/telegraf.conf -config-directory /etc/telegraf/telegraf.d
-    network_mode: host
-    volumes:
-      - "/etc/telegraf:/etc/telegraf:ro"
-      - "/:/hostfs:ro"
-      - "/etc:/hostfs/etc:ro"
-      - "/proc:/hostfs/proc:ro"
-      - "/sys:/hostfs/sys:ro"
-      - "/var/run:/var/run:ro"
-      - "/etc/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
-      - "/etc/telegraf/telegraf.d:/etc/telegraf/telegraf.d"
-    env:
-      HOST_MOUNT_PREFIX: /hostfs
-      HOST_ETC: /hostfs/etc
-      HOST_PROC: /hostfs/proc
-      HOST_SYS: /hostfs/sys
+- include_tasks: "telegraf-ceph.yml"
+  when: ('ceph' in group_names)

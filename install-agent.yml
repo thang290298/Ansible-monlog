@@ -1,5 +1,6 @@
 ---
-- hosts: telegraf
+- name: Install telegraf 
+  hosts: all
   become: true
   roles:
   - { role: telegraf, tags: ["telegraf"] }
