@@ -1,7 +1,7 @@
 ---
 - include_tasks: "telegraf-server-basic.yml"
   when:
-    - inventory_hostname in groups["ops"]
+    - inventory_hostname in groups["all"]
 
 - include_tasks: "telegraf-ops-controller.yml"
   when: inventory_hostname in groups["controller"]
