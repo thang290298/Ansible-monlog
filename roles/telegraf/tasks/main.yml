@@ -1,39 +1,20 @@
 ---
-
-- name: Adding Telegraf group
-  group:
-    name: telegraf
-    state: present
-    gid: "{{ telegraf_gid_docker }}"
-
-- name: Adding Telegraf user
-  user:
-    name: telegraf
-    group: telegraf
-    state: present
-    create_home: False
-    home: /etc/telegraf
-    uid: "{{ telegraf_uid_docker }}"
-    system: True
-  become: yes
-
-- name: Create /etc/telegraf (home) directory
+- name: Creates directory Prometheus
   file:
-    path: /etc/telegraf
-    owner: telegraf
-    group: telegraf
-    mode: 0750
+    path: "{{ item }}"
     state: directory
-  become: yes
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "/etc/telegraf"
+  - "/etc/telegraf/telegraf.d"
 
-- name: Create /etc/telegraf.d directory
-  file:
-    path: /etc/telegraf/telegraf.d
-    owner: telegraf
-    group: telegraf
-    mode: 0750
-    state: directory
-  become: yes
+
+- name: Coppy file config telegraf.conf
+  template:
+    src: "templates/telegraf.conf.j2"
+    dest: "/etc/telegraf/telegraf.conf"
 
 - name: Run Telegraf Docker container
   docker_container:
@@ -51,6 +32,8 @@
       - "/proc:/hostfs/proc:ro"
       - "/sys:/hostfs/sys:ro"
       - "/var/run:/var/run:ro"
+      - "/etc/telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+      - "/etc/telegraf/telegraf.d:/etc/telegraf/telegraf.d"
     env:
       HOST_MOUNT_PREFIX: /hostfs
       HOST_ETC: /hostfs/etc

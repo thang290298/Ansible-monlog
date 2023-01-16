@@ -1,0 +1,5 @@
+---
+- hosts: telegraf
+  become: true
+  roles:
+  - { role: telegraf, tags: ["telegraf"] }

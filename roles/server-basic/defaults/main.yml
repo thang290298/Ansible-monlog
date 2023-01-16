@@ -12,6 +12,7 @@ docker_required_packages:
   - "zip"
   - "unzip"
   - "sshpass"
+  - "iputils-ping"
 docker_gpg_url: https://download.docker.com/linux/ubuntu/gpg
 docker_repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
 docker_packges:
