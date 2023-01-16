@@ -2,10 +2,10 @@
 ## Default Kibana configuration from Kibana base image.
 ## https://github.com/elastic/kibana/blob/master/src/dev/build/tasks/os_packages/docker_generator/templates/kibana_yml.template.js
 #
-server.name: kibana.{{ server_name }}
+server.name: {{ kibana_hostname }}
 server.host: {{ IP_Public }}
 server.port: {{ kibana_PORT }}
-server.publicBaseUrl: "https://kibana.{{ server_name }}:{{ kibana_PORT }}"
+server.publicBaseUrl: "https://{{ kibana_hostname }}:{{ kibana_PORT }}"
 elasticsearch.hosts: [ "https://{{ IP_Public }}:{{ ES_PORT }}" ]
 server.ssl.enabled: true
 server.ssl.certificate: /usr/share/kibana/config/certs/elasticsearch/elasticsearch.crt

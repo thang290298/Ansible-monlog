@@ -1,6 +1,6 @@
 # ------------------------- Monitor -------------------------
 # IP server Monlog
-IP_Monitor: 10.159.34.16
+IP_Monitor: 192.168.70.68
 # prometheus
 prometheus_port: 9090
 # alertmanagers
@@ -16,8 +16,8 @@ ceph_exporter_port: 9128
 # ------------------------- Logging -------------------------
 # info
 server_name: smartcloud.com
-IP_Public: 192.168.70.51
-ELK_VERSION: 7.17.6
+IP_Public: 192.168.70.68
+ELK_VERSION: 7.17.7
 elastic_user: elastic
 elastic_password: Vnpt@!2023
 discovery_type: single-node

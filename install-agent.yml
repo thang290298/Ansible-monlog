@@ -4,3 +4,21 @@
   become: true
   roles:
   - { role: telegraf, tags: ["telegraf"] }
+
+- name: install libvirt
+  hosts: compute
+  become: true
+  roles:
+  - { role: libvirt_exporter, tags: ["libvirt_exporter"] }
+
+- name: install ceph_exporter
+  hosts: ceph
+  become: true
+  roles:
+  - { role: ceph_exporter, tags: ["ceph_exporter"] }
+
+- name: install filebeat
+  hosts: all
+  become: true
+  roles:
+  - { role: filebeat, tags: ["filebeat"] }
