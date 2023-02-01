@@ -1,0 +1,33 @@
+---
+# tasks file for install_ops_exporter
+- name: Create directory config openstack exporter
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+  with_items:
+  - "/root/.config/openstack/"
+
+- name: Coppy file config cloud.yaml
+  template:
+    src: "templates/clouds.yaml.j2"
+    dest: "/root/.config/openstack/clouds.yaml"
+
+- name: Create container docker openstack exporter
+  docker_container:
+    name: openstack_exporter
+    image: "quay.io/niedbalski/openstack-exporter-linux-amd64:master"
+    state: started
+    pull: yes
+    restart: yes
+    restart_policy: always
+    command: >
+      --os-client-config /etc/openstack/clouds.yaml 
+      --multi-cloud
+    network_mode: host
+    volumes:
+    - "/etc/timezone:/etc/timezone:ro"
+    - "/etc/localtime:/etc/localtime:ro"
+    - "/root/.config/openstack/:/etc/openstack/:ro"
