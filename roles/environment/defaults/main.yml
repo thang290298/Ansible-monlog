@@ -1,0 +1,27 @@
+---
+# add user to group Docker
+group_user: docker
+docker_required_packages:
+  - "apt-transport-https"
+  - "ca-certificates"
+  - "gnupg-agent"
+  - "software-properties-common"
+  - "python3-pip"
+  - "python3-setuptools"
+docker_gpg_url: https://download.docker.com/linux/ubuntu/gpg
+docker_repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+docker_packges:
+  - "docker-ce"
+  - "docker-ce-cli"
+  - "containerd.io"
+docker_compose_url: https://github.com/docker/compose/releases/download/v2.7.0/docker-compose-linux-x86_64
+disk_partition: /dev/vdb
+partition_number: 1
+data_path: /monitor
+server_required_packages:
+  - "zip"
+  - "unzip"
+  - "sshpass"
+  - "net-tools"
+  - "parted"
+  - "curl"

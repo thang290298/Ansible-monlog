@@ -1,0 +1,129 @@
+---
+- name: list user
+  command: awk -F':' '($3>=1000)&&($1!="root"){print $1}' /etc/passwd
+  register: user_list
+  changed_when: false
+
+- name: Xóa các người dùng với đường dẫn ngoại trừ root
+  command: stat -c %U /home/{{ item }} | grep -v root
+  register: user_home_owner
+  with_items: "{{ user_list.stdout_lines }}"
+  changed_when: false
+  ignore_errors: true
+
+- name: Xóa các người dùng có đường dẫn ngoại trừ root
+  user:
+    name: "{{ item }}"
+    state: absent
+    remove: yes
+  with_items: "{{ user_list.stdout_lines }}"
+  when: "'root' not in item and item in user_home_owner.results | map(attribute='item') | list"
+
+- name: Update repo and cache
+  apt:
+    update_cache=yes
+    force_apt_get=yes
+    cache_valid_time=3600
+
+- name: Upgrade all apt packages
+  apt: upgrade=dist
+
+- name: Install packages required
+  apt:
+    name: "{{ server_required_packages }}"
+    update_cache: yes
+    install_recommends: no
+    state: present
+- name: Creates directory path local container logging system
+  file:
+    path: "{{ elk_path }}"
+    state: directory
+    mode: 0755
+    owner: 1000
+    group: 1000
+
+   
+- name: Create partition {{ disk_partition }}
+  parted:
+    device: "{{ disk_partition }}"
+    number: "{{ partition_number }}"
+    state: present
+    part_end: 100%
+    part_type: primary
+
+- name: Create ext4 filesystem on {{ disk_partition }}{{ partition_number }}
+  filesystem:
+    fstype: ext4
+    dev: "{{ disk_partition }}{{ partition_number }}"
+
+- name: Mount the new partition on /usr/share
+  mount:
+    src: "{{ disk_partition }}{{ partition_number }}"
+    path: "{{ elk_path }}"
+    fstype: ext4
+    state: mounted
+    opts: defaults
+  become: true
+
+- name: Add the new partition to /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    line: '{{ disk_partition }}{{ partition_number }}  "{{ data_path }}"  ext4  defaults  0  0'
+    state: present
+
+- name: Install packages necessary for APT to use a repository over HTTPS
+  apt:
+    name: "{{ docker_required_packages }}"
+    update_cache: yes
+    install_recommends: no
+    state: present
+
+- name: Add official Docker GPG key
+  apt_key:
+    url: "{{ docker_gpg_url }}"
+    state: present
+
+
+- name: Add official Docker APT repository
+  apt_repository:
+    repo: "{{ docker_repo }}"
+    state: present
+    filename: 'docker-official'
+    update_cache: yes
+
+- name: Install Python Docker module
+  pip:
+    name: docker
+
+
+- name: Install docker-ce
+  apt:
+    name: "{{ docker_packges }}"
+    update_cache: yes
+    install_recommends: yes
+    state: present
+
+
+- name: Add users to the Docker group
+  user:
+    name: "{{ group_user }}"
+    groups: docker
+    append: yes
+
+
+- name: Install docker-compose
+  get_url:
+    url: "{{ docker_compose_url }}"
+    dest: /usr/local/bin/docker-compose
+    mode: u+x,g+x,o+x
+
+- name: check version docker is installed
+  shell: command docker -v
+  register: print_version_docker
+  ignore_errors: yes
+- name: check version docker-compose is installed
+  shell: command docker-compose version
+  register: print_version_docker_compose
+  ignore_errors: yes
+- debug: msg="{{ print_version_docker.stdout }}"
+- debug: msg="{{ print_version_docker_compose.stdout }}"
