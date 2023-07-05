@@ -9,8 +9,8 @@ index_codec: best_compression
 #----------- Lopgging -----------------------
 logging_selectors: 
 filebeat_conf_dir: /usr/share/filebeat
-logging_path_local: /var/log/filebeat
-logging_path_container: /usr/share/filebeat/logs
+logging_path_local: /var/log
+logging_path_container: /usr/share/filebeat/log
 logging_file_name: filebeat
 logging_keepfiles: 7
 logging_file_permissions: 0644

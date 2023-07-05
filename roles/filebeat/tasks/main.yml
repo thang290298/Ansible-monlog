@@ -16,7 +16,7 @@
     owner: 1000
     group: 1000
   with_items:
-  - "{{ logging_path_local }}"
+  - "{{ logging_path_local }}/{{ logging_file_name }}"
 
 - name: Coppy file config filebeat.yml
   template:
@@ -35,7 +35,8 @@
     - "/etc/timezone:/etc/timezone:ro"
     - "/etc/localtime:/etc/localtime:ro"
     - "{{ filebeat_conf_dir }}/filebeat.yml:{{ filebeat_conf_dir }}/filebeat.yml:rw"
-    - "{{ logging_path_local }}:{{ filebeat_conf_dir }}/logs:rw"
+    - "{{ logging_path_local }}:{{ logging_path_container }}:ro"
+    - "/var/lib/docker/volumes/kolla_logs/_data:{{ logging_path_container }}/kolla:ro"
     network_mode: host
 
 - name: Allow port {{ logstash_port }}

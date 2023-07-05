@@ -1,21 +1,21 @@
 filebeat.inputs:
 - type: log
-  enabled: {{ filebeat_input_enabled}}
+  enabled: {{ filebeat_input_enabled }}
   paths:
-    - {{ filebeat_conf_dir }}/logs/*log
+    - {{ logging_path_container }}/*log
   tags: ["server_log"]
 
 - type: log
   enabled: true
   paths:
-    - {{ filebeat_conf_dir }}/logs/kolla/*/*log
+    - {{ logging_path_container }}/kolla/*/*log
   tags: ["openstack"]
 
 - type: log
   enabled: true
   paths:
-    - {{ filebeat_conf_dir }}/logs/ceph/cephadm.log*
-    - {{ filebeat_conf_dir }}/logs/ceph/*/*log
+    - {{ logging_path_container }}/ceph/cephadm.log*
+    - {{ logging_path_container }}/ceph/*/*log
   tags: ["ceph"]
 
 filebeat.config:
