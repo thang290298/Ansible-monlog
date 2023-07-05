@@ -1,19 +1,4 @@
 ---
-- name: Clone a github project Digitalocean/ceph_exporter
-  git:
-    repo: https://github.com/digitalocean/ceph_exporter.git
-    dest: /root/ceph_exporter/
-    clone: yes
-    update: yes
-
-- name: build image ceph_exporter
-  docker_image:
-    name: Digitalocean/ceph_exporter:latest
-    build:
-      path: /root/ceph_exporter
-      source: build
-    state: present
-
 - name: run container ceph_exporter
   docker_container:
     name: ceph_exporter
@@ -26,6 +11,5 @@
     - "/etc/timezone:/etc/timezone:ro"
     - "/etc/localtime:/etc/localtime:ro"
     - "/etc/ceph:/etc/ceph:ro"
-    network_mode: host
     ports:
     - "{{ ceph_exporter_port }}:{{ ceph_exporter_port }}"

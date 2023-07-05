@@ -1,14 +1,27 @@
 clouds:
- ops.lab:
+ smartcloud_ops.ntl3:
    region_name: Hanoi
    identity_api_version: 3
    identity_interface: internal
    auth:
-     username: admin
-     password: MbS8qtvyr0XlNBVLKImER2L0twyYGMOZize9tM63
+     username: "{{ username }}"
+     password: "{{ password }}"
      project_name: admin
      project_domain_name: 'default'
      project_domain_id: 'default'
      user_domain_name: 'default'
-     auth_url: http://192.168.30.50:35357/v3
+     auth_url: "{{ authentication_endpoint }}"
+   verify: False
+ smartcloud_ops.tt3:
+   region_name: Hanoi
+   identity_api_version: 3
+   identity_interface: internal
+   auth:
+     username: "{{ username }}"
+     password: "{{ password }}"
+     project_name: admin
+     project_domain_name: 'default'
+     project_domain_id: 'default'
+     user_domain_name: 'default'
+     auth_url: "{{ authentication_endpoint }}"
    verify: False

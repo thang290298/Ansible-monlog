@@ -1,0 +1,20 @@
+- targets: ['10.159.34.10:{{ telegraf_port }}']
+  labels:
+    hostname: 'controller-demo'
+    site: 'Smartcloud_tt3'
+- targets: ['10.159.34.11:{{ telegraf_port }}']
+  labels:
+    hostname: 'network-demo'
+    site: 'Smartcloud_tt3'
+- targets: ['10.159.34.12:{{ telegraf_port }}']
+  labels:
+    hostname: 'compute-demo01'
+    site: 'Smartcloud_tt3'
+- targets: ['10.159.34.13:{{ telegraf_port }}']
+  labels:
+    hostname: 'compute-demo02'
+    site: 'Smartcloud_tt3'
+- targets: ['10.159.34.14:{{ telegraf_port }}']
+  labels:
+    hostname: 'compute-demo03'
+    site: 'Smartcloud_tt3'

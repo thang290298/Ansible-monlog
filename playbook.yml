@@ -1,0 +1,9 @@
+---
+- hosts: ceph
+  become: true
+  roles:
+  - { role: environment, tags: ["environment"] }
+  - { role: prometheus, tags: ["prometheus"] }
+  - { role: grafana, tags: ["grafana"] }
+  - { role: alertmanagers, tags: ["alertmanagers"] }
+  - { role: webhook-telegram, tags: ["webhook-telegram"] }

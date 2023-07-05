@@ -1,10 +1,10 @@
 ---
 - include_tasks: "telegraf-server-basic.yml"
   when:
-    - inventory_hostname in groups["all"]
+    - inventory_hostname in groups["default"]
 
 - include_tasks: "telegraf-ops-controller.yml"
-  when: inventory_hostname in groups["controller"]
+  when: inventory_hostname in groups["controller01"]
 
 - include_tasks: "telegraf-ceph.yml"
-  when: inventory_hostname in groups["ceph"]
+  when: inventory_hostname in groups["cephmaster"]

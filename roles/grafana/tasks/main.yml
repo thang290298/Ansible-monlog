@@ -8,6 +8,8 @@
     group: 1000
   with_items:
   - "/var/log/grafana"
+  - "{{ Grafana_conf_local }}"
+  - "{{ Grafana_conf_local }}/conf"
 
 - name: Create container docker alertmanager
   docker_container:
@@ -21,6 +23,7 @@
     volumes:
     - "/etc/timezone:/etc/timezone:ro"
     - "/etc/localtime:/etc/localtime:ro"
-    - "/etc/prometheus/data:/etc/prometheus/data:ro"
+    - "{{ Prometheus_conf_local }}/data:{{ Prometheus_conf_container }}/data:ro"
     - "/var/log/grafana:/var/log/grafana:rw"
+    - "{{ Grafana_conf_local }}/conf:{{ Grafana_conf_container }}/conf:rw"
     network_mode: host

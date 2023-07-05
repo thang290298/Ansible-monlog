@@ -1,0 +1,12 @@
+- targets: ['10.159.34.12:{{ libvirt_expoter_port }}']
+  labels:
+    hostname: 'compute-demo01'
+    site: '{{ site_tt3 }}'
+- targets: ['10.159.34.13:{{ libvirt_expoter_port }}']
+  labels:
+    hostname: 'compute-demo02'
+    site: '{{ site_tt3 }}'
+- targets: ['10.159.34.14:{{ libvirt_expoter_port }}']
+  labels:
+    hostname: 'compute-demo03'
+    site: '{{ site_tt3 }}'

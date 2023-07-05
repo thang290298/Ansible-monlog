@@ -1,9 +1,0 @@
----
-- hosts: logging
-  become: true
-  roles:
-  - { role: certs, tags: ["certs"] }
-  - { role: elasticsearch, tags: ["elasticsearch"] }
-  - { role: logstash, tags: ["logstash"] }
-  - { role: kibana, tags: ["kibana"] }
-  - { role: comrade, tags: ["comrade"] }

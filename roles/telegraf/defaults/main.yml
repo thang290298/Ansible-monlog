@@ -1,17 +1,1 @@
----
-# Docker specific settings
 telegraf_image_version: 1.25.0
-# Config input
-urls_ping1: 8.8.8.8
-urls_ping2: 192.168.30.50
-urls_ping3: 192.168.30.54
-urls_ping4: 192.168.30.56
-# Config output
-prometheus_client_port: 9012
-
-# Input Openstack
-authentication_endpoint: http://192.168.30.50:35357/v3
-domain: default
-project: admin
-username: admin
-password: MbS8qtvyr0XlNBVLKImER2L0twyYGMOZize9tM63

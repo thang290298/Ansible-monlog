@@ -1,0 +1,183 @@
+groups:
+# Ceph Cluster
+- name: Ceph Cluster
+  rules:
+  # CEPH Status
+  - alert: CephWarnState
+    expr: ceph_health_status == 1
+    for: 30m
+    labels:
+      severity: warning
+    annotations:
+      description: Ceph job {{ $labels.job }} is in Warn state longer than 30m, please check status of pools and OSDs
+      summary: CEPH in WARN
+  - alert: CephErrorState
+    expr: ceph_health_status > 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      description: "Ceph job {{ $labels.job }} is in Error state longer than 5m, please check status of pools and OSDs"
+      summary: "CEPH in ERROR"
+# Ceph osd
+- name: Ceph OSDs
+  rules:
+#OsdDown
+  - alert: OsdDown
+    expr: ceph_osd_up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "OSD down on node server {{$labels.host}}({{$labels.instance}})"
+      description: "OSD is down longer than 5 min, please check whats the status\n - OSD id: {{ $labels.osd }}\n - level: critical\n - job: {{ $labels.job }}"
+#OsdApplyLatency
+  - alert: OsdApplyLatencyTooHigh
+    expr: ceph_osd_perf_apply_latency_seconds > 0.5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "OSD latency too high on server {{$labels.host}}({{$labels.instance}})"
+      description: "OSD latency for {{ $labels.osd }} is too high.\n - VALUE: {{ $value }} ms\n - level: warning\n - job: {{ $labels.job }}\n  Please check if it doesn't stuck in weird state"
+  - alert: OsdApplyLatencyTooHigh
+    expr: ceph_osd_perf_apply_latency_seconds > 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "OSD latency too high on server {{$labels.host}}({{$labels.instance}})"
+      description: "OSD latency for {{ $labels.osd }} is too high.\n - VALUE: {{ $value }} ms\n - level: critical\n - job: {{ $labels.job }}\n  Please check if it doesn't stuck in weird state"  
+#OsdCommitLatency
+  - alert: OsdCommitLatencyTooHigh
+    expr: ceph_osd_perf_commit_latency_seconds > 0.5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "OSD commit latency too high on server {{$labels.host}}({{$labels.instance}})"
+      description: "OSD commit latency for {{ $labels.osd }} is too high.\n - VALUE: {{ $value }} ms\n - level: warning\n - job: {{ $labels.job }}\n  Please check if it doesn't stuck in weird state"
+  - alert: OsdCommitLatencyTooHigh
+    expr: ceph_osd_perf_commit_latency_seconds > 1
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "OSD commit latency too high on server {{$labels.host}}({{$labels.instance}})"
+      description: "OSD commit latency for {{ $labels.osd }} is too high.\n - VALUE: {{ $value }} ms\n - level: critical\n - job: {{ $labels.job }}\n  Please check if it doesn't stuck in weird state"
+#AgeragePGsOSD
+  - alert: AgeragePGsOSD
+    expr: ceph_osd_pgs > 160
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Number of PGs - {{ $labels.osd }}"
+      description: "\n - Number of PGs: {{ $value }} PGs\n - level: warning\n - Server:{{$labels.host}}({{$labels.instance}})\n - job: {{ $labels.job }}"
+  - alert: AgeragePGsOSD
+    expr: ceph_osd_pgs > 200
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Number of PGs - {{ $labels.osd }}"
+      description: "\n - Number of PGs: {{ $value }} PGs\n - level: critical\n - Server:{{$labels.host}}({{$labels.instance}})\n - job: {{ $labels.job }}"
+#CephOSDUtilizatoin
+  - alert: CephOSDUtilizatoin
+    expr: ceph_osd_utilization > 85
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "OSD {{ $labels.osd }} is going out of space 85%"
+      description: "Osd free space higher\n -  Utilizatoin: {{ $value }} (%)\n - level: warning\n - Server:{{$labels.host}}({{$labels.instance}})\n - job: {{ $labels.job }}"
+#MonitorClockSkew       
+  - alert: MonitorClockSkewTooHigh
+    expr: abs(ceph_monitor_clock_skew_seconds) > 0.1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Clock skew detected on {{ $labels.monitor }}({{$labels.instance}})!"
+      description: "Monitor clock skew detected on  {{ $labels.monitor }} - {{ $labels.job }}\n - Please check ntp and harware clock settins"
+# Ceph storage
+- name: Ceph Storage
+  rules:      
+  - alert: CephUsedStorage
+    expr: (ceph_cluster_used_bytes/ceph_cluster_capacity_bytes) * 100 > 70
+    for: 5m
+    labels:
+      severity: info
+    annotations:
+      summary: "Monitor storage for  {{ $labels.job }} high"
+      description: "System Object Storage used high than 70%\n - Used: {{ $value }}%\n - level: info\n - please check why its too high"
+  - alert: CephUsedStorage
+    expr: (ceph_cluster_used_bytes/ceph_cluster_capacity_bytes) * 100 > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Monitor storage for  {{ $labels.job }} high"
+      description: "System Object Storage used high than 70%\n - Used: {{ $value }}%\n - level: warning\n - please check why its too high"
+  - alert: CephUsedStorage
+    expr: (ceph_cluster_used_bytes/ceph_cluster_capacity_bytes) * 100 > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Monitor storage for  {{ $labels.job }} high"
+      description: "System Object Storage used high than 70%\n - Used: {{ $value }}%\n - level: critical\n - please check why its too high"
+# Ceph PGs
+- name: Ceph PGs
+  rules:      
+  - alert: CephPgDown
+    expr: ceph_down_pgs > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "PG DOWN on {{ $labels.cluster }}"
+      description: "\n - PG DOWN: {{ $value }}%\n - level: critical\n - Cluster: {{ $labels.cluster }}\n - job: {{ $labels.job }}"
+  - alert: CephPgUnavailable
+    expr: ceph_total_pgs - ceph_active_pgs > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "PG UNAVAILABLE [{{ $value }}] on {{ $labels.cluster }} "
+      description: "\n - PGs Number: {{ $value }}\n - level: warning\n - job: {{ $labels.job }}"
+  - alert: CephPGsDegraded
+    expr: ceph_degraded_pgs > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Ceph PGs degraded on {{ $labels.cluster }}"
+      description: "\n - PGs degraded: {{ $value }}\n - level: critical\n - job: {{ $labels.job }}"
+# Ceph Pools
+- name: Ceph Pools
+  rules:  
+  - alert: CephPoolStorage
+    expr: (ceph_pool_used_bytes/(ceph_pool_available_bytes + ceph_pool_used_bytes)) * 100 > 70
+    for: 5m
+    labels:
+      severity: info
+    annotations:
+      summary: "Pools Storage {{ $labels.pool }} using 70%!"
+      description: "Monitor storage Pools for {{ $labels.cluster }}\n - Pools used: {{ $value }} (%)\n - level: info\n - job: {{ $labels.job }}"
+  - alert: CephPoolStorage
+    expr: (ceph_pool_used_bytes/(ceph_pool_available_bytes + ceph_pool_used_bytes)) * 100 > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Pools Storage {{ $labels.pool }} using 80%!"
+      description: "Monitor storage Pools for {{ $labels.cluster }}\n - Pools used: {{ $value }} (%)\n - level: warning\n - job: {{ $labels.job }}"
+  - alert: CephPoolStorage
+    expr: (ceph_pool_used_bytes/(ceph_pool_available_bytes + ceph_pool_used_bytes)) * 100 > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Pools Storage {{ $labels.pool }} using 90%!"
+      description: "Monitor storage Pools for {{ $labels.cluster }}\n - Pools used: {{ $value }} (%)\n - level: critical\n - job: {{ $labels.job }}"

@@ -8,12 +8,12 @@
     owner: 1000
     group: 1000
   with_items:
-  - "/root/.config/openstack/"
+  - "{{ ops_conf_local }}"
 
 - name: Coppy file config cloud.yaml
   template:
     src: "templates/clouds.yaml.j2"
-    dest: "/root/.config/openstack/clouds.yaml"
+    dest: "{{ ops_conf_local }}/clouds.yaml"
 
 - name: Create container docker openstack exporter
   docker_container:
@@ -24,10 +24,10 @@
     restart: yes
     restart_policy: always
     command: >
-      --os-client-config /etc/openstack/clouds.yaml 
+      --os-client-config {{ ops_conf_container }}/clouds.yaml 
       --multi-cloud
     network_mode: host
     volumes:
     - "/etc/timezone:/etc/timezone:ro"
     - "/etc/localtime:/etc/localtime:ro"
-    - "/root/.config/openstack/:/etc/openstack/:ro"
+    - "{{ ops_conf_local }}:{{ ops_conf_container }}/:ro"

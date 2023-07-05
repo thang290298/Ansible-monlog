@@ -7,16 +7,16 @@
     owner: 1000
     group: 1000
   with_items:
-  - "{{ alertmanager_conf_dir }}"
+  - "{{ alertmanager_conf_local }}"
 - name: Coppy file config alertmanager
   template: src={{ item.src }} dest={{ item.dest }}
   with_items:
-    - { src: 'templates/alertmanager.yml.j2', dest: '{{ alertmanager_conf_dir }}/alertmanager.yml' }
+    - { src: 'templates/alertmanager.yml.j2', dest: '{{ alertmanager_conf_local }}/alertmanager.yml' }
 
 - name: Download template alert
   get_url:
     url: https://raw.githubusercontent.com/prometheus/alertmanager/master/template/default.tmpl
-    dest: "{{ alertmanager_conf_dir }}/notifications.tmpl"
+    dest: "{{ alertmanager_conf_local }}/notifications.tmpl"
 
 - name: Create container docker alertmanager
   docker_container:
@@ -29,8 +29,8 @@
     volumes:
     - "/etc/timezone:/etc/timezone:ro"
     - "/etc/localtime:/etc/localtime:ro"
-    - "{{ alertmanager_conf_dir }}:{{ alertmanager_conf_dir }}:ro"
-    - "{{ Prometheus_conf_dir }}:{{ Prometheus_conf_dir }}:ro"
-    - "{{ alertmanager_conf_dir }}/alertmanager.yml:{{ alertmanager_conf_dir }}/alertmanager.yml:rw"
-    - "{{ alertmanager_conf_dir }}/notifications.tmpl:{{ alertmanager_conf_dir }}/notifications.tmpl:rw"
+    - "{{ alertmanager_conf_local }}:{{ alertmanager_conf_container }}:ro"
+    - "{{ Prometheus_conf_local }}:{{ Prometheus_conf_container }}:ro"
+    - "{{ alertmanager_conf_local }}/alertmanager.yml:{{ alertmanager_conf_container }}/alertmanager.yml:rw"
+    - "{{ alertmanager_conf_local }}/notifications.tmpl:{{ alertmanager_conf_container }}/notifications.tmpl:rw"
     network_mode: host

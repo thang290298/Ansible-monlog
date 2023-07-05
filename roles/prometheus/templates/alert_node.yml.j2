@@ -1,0 +1,361 @@
+groups:
+- name: Instances
+  rules:
+  # Node not connect prometheus
+  - alert: Node lose connection
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      title: Node {{ $labels.instance }} is disconnect
+      summary: Prometheus target missing instance {{ $labels.instance }}) on {{ $labels.job }} for more than 1 minutes. Node lose connection.
+      description: "Yeu cau xu ly"
+
+- name: Memory
+  rules:
+# Memory sử dụng trên 70%
+  - alert: NodeOutOfMemory
+    expr: mem_used_percent > 70
+    for: 5m
+    labels:
+      severity: info
+    annotations:
+      summary: "Out of memory on node server {{ $labels.server }}"
+      description: "\n - Memory use: {{ $value }}%\n - level: info\n - instance: {{ $labels.instance }}\n - job: {{ $labels.job }}"
+# Memory sử dụng trên 80%
+  - alert: NodeOutOfMemory
+    expr: mem_used_percent > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Out of memory on node server {{ $labels.server }}"
+      description: "\n - Memory use: {{ $value }}%\n - level: warning\n - instance: {{ $labels.instance }}\n - job: {{ $labels.job }}"
+# Memory sử dụng trên 90%
+  - alert: NodeOutOfMemory
+    expr: mem_used_percent > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Out of memory on node server {{$labels.host}}({{$labels.instance}})"
+      description: "\n - Memory use: {{ $value }}%\n - level: critical\n - instance: {{ $labels.instance }}\n - job: {{ $labels.job }}"
+# Swap sử dụng trên 80%
+- name: Swap
+  rules:
+  - alert: SwapMemory
+    expr: (mem_swap_free/mem_swap_total) * 100 < 20
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Out of memory on node server {{$labels.host}}({{$labels.instance}})"
+      description: "\n - Memory use: {{ $value }}%\n - level: warning\n - instance: {{ $labels.instance }}\n - job: {{ $labels.job }}"
+# Mức sử dụng CPU
+- name: CPULoad
+  rules:
+  # CPU sử dụng trên 70%
+  - alert: CpuUsed
+    expr: 100 - cpu_usage_idle{cpu="cpu-total"} > 70
+    for: 5m
+    labels:
+      severity: info
+    annotations:
+      summary: "High CPU Usage detected {{$labels.host}}({{$labels.instance}}) > 70%!"
+      description: "Has really high CPU usage for over 5m:\n - level: info\n - job: {{ $labels.job }}"
+  # CPU sử dụng trên 80%
+  - alert: CpuUsed
+    expr: 100 - cpu_usage_idle{cpu="cpu-total"} > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU Usage detected {{$labels.host}}({{$labels.instance}}) > 80%!"
+      description: "Has really high CPU usage for over 5m:\n - level: warning\n - job: {{ $labels.job }}"
+    # CPU sử dụng trên 90%
+  - alert: CpuUsed
+    expr: 100 - cpu_usage_idle{cpu="cpu-total"} > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High CPU Usage detected {{$labels.host}}({{$labels.instance}}) > 90%!"
+      description: "Has really high CPU usage for over 5m:\n - level: critical\n - job: {{ $labels.job }}"
+    # CPU user sử dụng trên 65% trong 10p
+  - alert: CpuUsed
+    expr: cpu_usage_user{cpu="cpu-total"} > 65
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU user time detected {{$labels.host}}({{$labels.instance}}) > 65%!"
+      description: "Has really high CPU user time for 10 Minute:\n - level: warning\n - job: {{ $labels.job }}"
+    # CPU user sử dụng trên 80% trong 10p
+  - alert: CpuUsed
+    expr: cpu_usage_user{cpu="cpu-total"} > 80
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High CPU user time detected {{$labels.host}}({{$labels.instance}}) > 80%!"
+      description: "Has really high CPU user time for 10 Minute:\n - level: critical\n - job: {{ $labels.job }}"
+    #CPU iowai sử dụng trên 30% trong 10p
+  - alert: CpuUsed
+    expr: cpu_usage_iowait{cpu="cpu-total"} > 30
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU user time detected {{$labels.host}}({{$labels.instance}}) > 30%!"
+      description: "Has really high CPU iowai for 10 Minute:\n - level: warning\n - job: {{ $labels.job }}"
+# Mức sử dụng Disk
+- name: Disk Usage
+  rules:
+  # Sử dụng disk trên 75%
+  - alert: High Disk Usage
+    expr: disk_used_percent > 75
+    for: 5m
+    labels:
+      severity: info
+    annotations:
+      summary: "Low data disk space detected {{$labels.host}}({{$labels.instance}})!"
+      description: "Mount Point {{ $labels.path}} is used above 75%:\n - Disk used: {{ $value }}%\n - level: info\n - job: {{ $labels.job }}"
+  # Sử dụng disk trên 80%
+  - alert: High Disk Usage
+    expr: disk_used_percent > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Low data disk space detected {{$labels.host}}({{$labels.instance}})!"
+      description: "Mount Point {{ $labels.path}} is used above 80%:\n - Disk used: {{ $value }}%\n - level: warning\n - job: {{ $labels.job }}"
+  # Sử dụng disk trên 90%
+  - alert: High Disk Usage
+    expr: disk_used_percent > 90
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Low data disk space detected {{$labels.host}}({{$labels.instance}})!"
+      description: "Mount Point {{ $labels.path}} is used above 90%:\n - Disk used: {{ $value }}%\n - level: critical\n - job: {{ $labels.job }}"
+  # Free inodes using trên 80%
+  - alert: Free inodes free
+    expr: (disk_inodes_used/disk_inodes_total) * 100 > 80
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Low Free inodes detected {{$labels.host}}({{$labels.instance}})!"
+      description: "Free inodes is used above 80%:\n - inodes used: {{ $value }}%\n - level: warning\n - job: {{ $labels.job }}"
+  # Maximum number of opened files
+  - alert: Maxopenfile
+    expr: linux_sysctl_fs_file_max < 1024
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Maximum number of opened files {{$labels.host}}({{$labels.instance}})!"
+      description: "The number of files that can be opened is too small (< 1024):\n - Maximum: {{ $value }}%\n - level: warning\n - job: {{ $labels.job }}"
+# Cảnh báo về Network Node
+- name: NetworkNode
+  rules:
+  # Cảnh báo băng thôn in
+  - alert: NodeUnusualNetworkThroughputIn
+    expr: irate(net_bytes_recv[5m]) / 1024 / 1024  > 800
+    for: 1m
+    labels:
+      severity: info
+    annotations:
+      summary: "Unusual network throughput In {{$labels.host}}({{$labels.instance}})!"
+      description: "An abnormally high increase in network bandwidth has been detected (>800MB): \n - network bandwidth: {{ $value }} (MB/s)\n - level: critical\n - job: {{ $labels.job }}"
+  - alert: NodeUnusualNetworkThroughputIn
+    expr: irate(net_bytes_recv[5m]) / 1024 / 1024  > 1024
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Unusual network throughput In {{$labels.host}}({{$labels.instance}})!"
+      description: "An abnormally high increase in network bandwidth has been detected (>1GB): \n - network bandwidth: {{ $value }} (MB/s)\n - level: critical\n - job: {{ $labels.job }}"
+  - alert: NodeUnusualNetworkThroughputIn
+    expr: irate(net_bytes_recv[5m]) / 1024 / 1024  > 1200
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Unusual network throughput In {{$labels.host}}({{$labels.instance}})!"
+      description: "An abnormally high increase in network bandwidth has been detected (>1200MB): \n - network bandwidth: {{ $value }} (MB/s)\n - level: critical\n - job: {{ $labels.job }}"
+  # Cảnh báo băng thôn out
+  - alert: NodeUnusualNetworkThroughputOut
+    expr: irate(net_bytes_sent[5m]) / 1024 / 1024  > 800
+    for: 1m
+    labels:
+      severity: info
+    annotations:
+      summary: "Unusual network throughput In {{$labels.host}}({{$labels.instance}})!"
+      description: "An abnormally high increase in network bandwidth has been detected (>800MB): \n - network bandwidth: {{ $value }} (MB/s)\n - level: critical\n - job: {{ $labels.job }}"
+  - alert: NodeUnusualNetworkThroughputOut
+    expr: irate(net_bytes_sent[5m]) / 1024 / 1024  > 1024
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Unusual network throughput In {{$labels.host}}({{$labels.instance}})!"
+      description: "An abnormally high increase in network bandwidth has been detected (>1GB): \n - network bandwidth: {{ $value }} (MB/s)\n - level: critical\n - job: {{ $labels.job }}"
+  - alert: NodeUnusualNetworkThroughputOut
+    expr: irate(net_bytes_sent[5m]) / 1024 / 1024  > 1200
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Unusual network throughput In {{$labels.host}}({{$labels.instance}})!"
+      description: "An abnormally high increase in network bandwidth has been detected (>1200MB): \n - network bandwidth: {{ $value }} (MB/s)\n - level: critical\n - job: {{ $labels.job }}"
+  # Cảnh báo Network Drop
+  - alert: NodeNetworkTrafficDropIn
+    expr: rate(net_drop_in[5m]) > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Appear Network Traffic Drop In {{$labels.host}}({{$labels.instance}})!"
+      description: "Check phenomenon Network Traffic Drop In: \n - Traffic Drop In: {{ $value }} (p/s)\n - level: warning\n - job: {{ $labels.job }}"
+  - alert: NodeNetworkTrafficDropOut
+    expr: rate(net_drop_out[5m]) > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Appear Network Traffic Drop Out {{$labels.host}}({{$labels.instance}})!"
+      description: "Check phenomenon Network Traffic Drop Out: \n - Traffic Drop Out: {{ $value }} (p/s)\n - level: warning\n - job: {{ $labels.job }}"
+  # Cảnh báo Network Errors
+  - alert: NodeNetworkTrafficErrorsIn
+    expr: rate(net_err_in[5m]) > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Appear Network Traffic Errors In {{$labels.host}}({{$labels.instance}})!"
+      description: "Check phenomenon Network Traffic Errors In: \n - Traffic Errors In: {{ $value }} (p/s)\n - level: warning\n - job: {{ $labels.job }}"
+  - alert: NodeNetworkTrafficErrorsOut
+    expr: rate(net_err_out[5m]) > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Appear Network Traffic Errors Out {{$labels.host}}({{$labels.instance}})!"
+      description: "Check phenomenon Network Traffic Errors Out: \n - Traffic Errors Out: {{ $value }} (p/s)\n - level: warning\n - job: {{ $labels.job }}"
+  # Cảnh báo nf_conntrack
+  - alert: nf_conntrackfull
+    expr: (conntrack_ip_conntrack_count/conntrack_ip_conntrack_max) * 100 > 85
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Used nf_conntrack high in {{$labels.host}}({{$labels.instance}})!"
+      description: "The number of entries in the conntrack table high: \n - Used: {{ $value }} %\n - level: warning\n - job: {{ $labels.job }}"
+  - alert: nf_conntrackfull
+    expr: (conntrack_ip_conntrack_count/conntrack_ip_conntrack_max) * 100 > 100
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Used nf_conntrack high in {{$labels.host}}({{$labels.instance}})!"
+      description: "The number of entries in the conntrack table high: \n - Used: {{ $value }} %\n - level: critical\n - job: {{ $labels.job }}"
+  # Cảnh báo ping
+- name: Ping
+  rules:
+  # Cảnh báo loss gói tin ICMP
+  - alert: Packetloss
+    expr: ping_percent_packet_loss  > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "ICMP packet drop in {{$labels.host}}({{$labels.instance}})!"
+      description: "\n - source: {{ $labels.host }}\n - Destination: {{ $labels.url }}\n - Packet Loss: {{ $value }} Packet\n - job: {{ $labels.job }}"
+  - alert: PingTTL
+    expr: ping_ttl  > 100
+    for: 1m
+    labels:
+      severity: info
+    annotations:
+      summary: "Ping TTL high in {{$labels.host}}({{$labels.instance}})!"
+      description: "\n - source: {{ $labels.host }}\n - Destination: {{ $labels.url }}\n - TTL: {{ $value }}\n - level: info\n - job: {{ $labels.job }}"
+  - alert: PingTTL
+    expr: ping_ttl  > 200
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Ping TTL high in {{$labels.host}}({{$labels.instance}})!"
+      description: "\n - source: {{ $labels.host }}\n - Destination: {{ $labels.url }}\n - TTL: {{ $value }}\n - level: warning\n - job: {{ $labels.job }}"
+  - alert: PingTTL
+    expr: ping_ttl  > 500
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Ping TTL high in {{$labels.host}}({{$labels.instance}})!"
+      description: "\n - source: {{ $labels.host }}\n - Destination: {{ $labels.url }}\n - TTL: {{ $value }}\n - level: critical\n - job: {{ $labels.job }}"
+# Time đồng bộ
+- name: Time
+  rules:
+  - alert:  Time Deviation
+    expr: chrony_system_time  > 0.02
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Time Deviation high in {{$labels.host}}({{$labels.instance}})!"
+      description: "\n - Server time: {{ $labels.reference_id }}\n - Deviation: {{ $value }}\n - level: warning\n - job: {{ $labels.job }}"
+  - alert:  Time Deviation
+    expr: chrony_system_time  < -0.02
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Time Deviation high in {{$labels.host}}({{$labels.instance}})!"
+      description: "\n - Server time: {{ $labels.reference_id }}\n - Deviation: {{ $value }}\n - level: warning\n - job: {{ $labels.job }}"
+  - alert:  Time Deviation
+    expr: chrony_system_time  > 0.1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Time Deviation high in {{$labels.host}}({{$labels.instance}})!"
+      description: "\n - Server time: {{ $labels.reference_id }}\n - Deviation: {{ $value }}\n - level: critical\n - job: {{ $labels.job }}"
+  - alert:  Time Deviation
+    expr: chrony_system_time  < -0.1
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Time Deviation high in {{$labels.host}}({{$labels.instance}})!"
+      description: "\n - Server time: {{ $labels.reference_id }}\n - Deviation: {{ $value }}\n - level: critical\n - job: {{ $labels.job }}"
+# Process
+- name: Process
+  rules:
+  - alert:  Maximum number of processes
+    expr: processes_total_threads  < 256
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Maximum number of processes low in {{$labels.host}}({{$labels.instance}})!"
+      description: "The maximum number of processes is less than 256\n - Number of processes: {{ $value }}\n - level: warning\n - job: {{ $labels.job }}"
+  - alert:  Maximum number of server
+    expr: processes_total  > 1100
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Maximum number of processes high in {{$labels.host}}({{$labels.instance}})!"
+      description: "There are too many processes on the server (> 1000)\n - Number of processes: {{ $value }}\n - level: warning\n - job: {{ $labels.job }}"
+  - alert:  Number of running processes
+    expr: processes_running  > 30
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Maximum number of processes high in {{$labels.host}}({{$labels.instance}})!"
+      description: "There are too many processes running on the Server (> 30)\n - Processes running : {{ $value }}\n - level: warning\n - job: {{ $labels.job }}"

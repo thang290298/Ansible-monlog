@@ -1,0 +1,55 @@
+---
+# ------------------------- Monlog -------------------------
+## IP server Monlog
+IP_monlog: 10.165.104.21
+Monitor_path:
+site: demo
+
+## ------------------------- Prometheus -------------------------
+Prometheus_conf_local: "{{ Monitor_path }}/etc/prometheus"
+Prometheus_conf_container: /etc/prometheus
+prometheus_port: 9090
+## ------------------------- Alertmanager -------------------------
+alertmanager_conf_local: "{{ Monitor_path }}/etc/alertmanager"
+alertmanager_conf_container: /etc/alertmanager
+alert_username: cloudidc
+alert_password: smartcloud@2023
+alertmanagers_port: 9093
+telegram_bot_port: 9119
+## ------------------------- Grafana -------------------------
+Grafana_conf_local: "{{ Monitor_path }}/etc/grafana"
+Grafana_conf_container: /etc/grafana
+
+# ------------------------- Exporter -------------------------
+# Input Openstack
+authentication_endpoint: http://192.168.30.50:35357/v3
+domain: default
+project: admin
+username: admin
+password: MbS8qtvyr0XlNBVLKImER2L0twyYGMOZize9tM63
+
+
+# ------------------------- Telegraf -------------------------
+## telegraf
+telegraf_conf_local: "{{ Monitor_path }}/etc/telegraf"
+telegraf_conf_container: /etc/telegraf
+telegraf_port: 9012
+urls_ping1: 10.165.104.1
+urls_ping2: 10.165.105.1
+urls_ping3: 10.169.12.10
+urls_ping4: 10.169.12.11
+urls_ping5: 10.169.12.12
+# Openstack
+IP_OPS_VIP: 10.165.104.18
+ops_conf_local: "{{ Monitor_path }}/etc/openstack"
+ops_conf_container: /etc/openstack
+authentication_endpoint: "http://{{ IP_ops }}:35357/v3"
+domain: default
+project: admin
+username: admin
+password: MbS8qtvyr0XlNBVLKImER2L0twyYGMOZize9tM63
+# webhook-telegram
+libvirt_expoter_port: 9177
+#ceph_exporter
+ceph_exporter_port: 9128
+ops_exporter_port: 9180
