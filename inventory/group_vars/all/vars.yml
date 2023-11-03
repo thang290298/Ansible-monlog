@@ -1,6 +1,6 @@
 # ------------------------- Monitor -------------------------
 # IP server Monlog
-IP_Monitor: 192.168.70.68
+IP_Monitor: 192.168.30.60
 # prometheus
 prometheus_port: 9090
 # alertmanagers
@@ -15,8 +15,8 @@ libvirt_expoter_port: 9177
 ceph_exporter_port: 9128
 # ------------------------- Logging -------------------------
 # info
-server_name: smartcloud.com
-IP_Public: 192.168.70.68
+server_name: logging.devsmartcloud22.com
+IP_Public: 192.168.30.60
 ELK_VERSION: 7.17.7
 elastic_user: elastic
 elastic_password: Vnpt@!2023
@@ -58,4 +58,4 @@ logging_level: debug
 logging_to_files: true
 
 number_of_shards: 1
-IP_host: 192.168.70.51
+IP_host: 192.168.30.51
